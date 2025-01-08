@@ -1,4 +1,5 @@
-#define DOUBLY_LINKED_LIST_
+#ifndef DOUBLY_LINKED_LIST_HPP
+#define DOUBLY_LINKED_LIST_HPP
 #include <string>
 
 
@@ -38,4 +39,4 @@ public:
     void display() const;
 };
 
-
+#endif

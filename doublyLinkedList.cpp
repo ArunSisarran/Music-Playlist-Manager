@@ -22,7 +22,7 @@ bool DoublyLinkedList::addSong(Song* song){
     }
 
     if(head != nullptr){
-        Song* temp;
+        Song* temp = head;
 
         while(temp->next_){
             temp = temp->next_;
@@ -41,6 +41,7 @@ bool DoublyLinkedList::addSong(Song* song){
 
 bool DoublyLinkedList::addSong(Song* song, const int& position){
     if(position <= 0 || position > size){
+        std::cout<<"Invalid position '"<<position<<"'"<<std::endl;
         return false;
     } 
 
@@ -118,4 +119,28 @@ bool DoublyLinkedList::removeSong(const std::string& title){
     size--;
     std::cout<<"Removed Song: "<<title<<std::endl;
     return true;
+}
+
+bool DoublyLinkedList::removeSong(const int& position){
+    if(position <= 0 || position > size){
+        std::cout<<"Invalid position '"<<position<<"'"<<std::endl;
+        return false;
+    }
+
+
+}
+
+void DoublyLinkedList::display() const{
+    if (!head) {
+        std::cout << "Playlist is empty"<<std::endl;
+        return;
+    }
+
+    Song* current = head;
+    int index = 1;
+
+    while (current) {
+        std::cout << index++ << ". " << current->title_ << " by " << current->artist_ << " (" << current->duration_ << " seconds)"<<std::endl;
+        current = current->next_;
+    }
 }
