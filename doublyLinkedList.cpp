@@ -121,15 +121,6 @@ bool DoublyLinkedList::removeSong(const std::string& title){
     return true;
 }
 
-bool DoublyLinkedList::removeSong(const int& position){
-    if(position <= 0 || position > size){
-        std::cout<<"Invalid position '"<<position<<"'"<<std::endl;
-        return false;
-    }
-
-
-}
-
 void DoublyLinkedList::display() const{
     if (!head) {
         std::cout << "Playlist is empty"<<std::endl;

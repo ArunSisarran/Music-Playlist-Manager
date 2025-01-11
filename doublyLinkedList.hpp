@@ -34,7 +34,6 @@ public:
     bool addSong(Song* song, const int& position);
 
     bool removeSong(const std::string& title);
-    bool removeSong(const int& position);
 
     void display() const;
 };
