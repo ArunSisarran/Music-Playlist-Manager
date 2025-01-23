@@ -1,4 +1,5 @@
 #include "doublyLinkedList.hpp"
+#include <iostream>
 
 int main(){
 
@@ -24,5 +25,7 @@ int main(){
     playlist.removeSong("title 6");
 
     playlist.display();
+
+    playlist.searchForSong("title 4");
     return 0;
 }

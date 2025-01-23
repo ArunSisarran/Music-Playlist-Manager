@@ -121,6 +121,26 @@ bool DoublyLinkedList::removeSong(const std::string& title){
     return true;
 }
 
+Song* DoublyLinkedList::searchForSong(const std::string& title){
+    Song* current = head;
+
+    if(!head){
+        std::cout<<"Playlist is empty"<<std::endl;
+        return nullptr;
+    }
+
+    while(current && current->title_ != title){
+        current = current->next_;
+    }
+
+    if(!current){
+        std::cout<<"Name not found in playlist"<<std::endl;
+        return nullptr;
+    }
+
+    return current;
+}
+
 void DoublyLinkedList::display() const{
     if (!head) {
         std::cout << "Playlist is empty"<<std::endl;

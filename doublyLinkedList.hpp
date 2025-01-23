@@ -28,14 +28,20 @@ private:
     int size;
 
 public:
+//Default Constructor
     DoublyLinkedList();
-
+//Adds a song pointer to the linked list
     bool addSong(Song* song);
+//Adds a song pointer to the linked list at the specified position
     bool addSong(Song* song, const int& position);
-
+//Removes a song from the linked list based on the specified title of the song
     bool removeSong(const std::string& title);
-
+//Searches and returns the song pointer of the specified title
+    Song* searchForSong(const std::string& title);
+//Displays current linked list
     void display() const;
+//Saves the playlist to a json file
+    void savePlaylist() const;
 };
 
 #endif
