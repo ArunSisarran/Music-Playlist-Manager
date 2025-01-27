@@ -82,45 +82,6 @@ bool DoublyLinkedList::addSong(Song* song, const int& position){
     return false;
 }
 
-bool DoublyLinkedList::removeSong(const std::string& title){
-    Song* current = head;
-
-    if(!head){
-        std::cout<<"Playlist is empty"<<std::endl;
-        return false;
-    }
-
-    while(current && current->title_ != title){
-        current = current->next_;
-    }
-
-    if(!current){
-        std::cout<<"Name not found in playlist"<<std::endl;
-        return false;
-    }
-
-    if(current == head && current == tail){
-        head = nullptr;
-        tail = nullptr;
-    }
-    else if(current == head){
-        head = current->next_;
-        head->previous_ = nullptr;
-    }
-    else if(current == tail){
-        tail = current->previous_;
-        tail->next_ = nullptr;
-    }else{
-        current->previous_->next_ = current->next_;
-        current->next_->previous_ = current->previous_;
-    }
-
-    delete current;
-    size--;
-    std::cout<<"Removed Song: "<<title<<std::endl;
-    return true;
-}
-
 Song* DoublyLinkedList::searchForSong(const std::string& title){
     Song* current = head;
 
@@ -154,4 +115,29 @@ void DoublyLinkedList::display() const{
         std::cout << index++ << ". " << current->title_ << " by " << current->artist_ << " (" << current->duration_ << " seconds)"<<std::endl;
         current = current->next_;
     }
+}
+
+bool DoublyLinkedList::removeSong(const std::string& title){
+    Song* current = searchForSong(title);
+
+    if(current == head && current == tail){
+        head = nullptr;
+        tail = nullptr;
+    }
+    else if(current == head){
+        head = current->next_;
+        head->previous_ = nullptr;
+    }
+    else if(current == tail){
+        tail = current->previous_;
+        tail->next_ = nullptr;
+    }else{
+        current->previous_->next_ = current->next_;
+        current->next_->previous_ = current->previous_;
+    }
+
+    delete current;
+    size--;
+    std::cout<<"Removed Song: "<<title<<std::endl;
+    return true;
 }

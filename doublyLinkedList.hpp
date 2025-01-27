@@ -36,7 +36,7 @@ public:
     bool addSong(Song* song, const int& position);
 //Removes a song from the linked list based on the specified title of the song
     bool removeSong(const std::string& title);
-//Searches and returns the song pointer of the specified title
+//Searches and returns the song pointer of the specified title Song* searchForSong(const std::string& title);
     Song* searchForSong(const std::string& title);
 //Displays current linked list
     void display() const;
