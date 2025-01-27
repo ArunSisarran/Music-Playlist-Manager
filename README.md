@@ -10,7 +10,7 @@ A command-line application that uses a doubly linked list to manage a music play
     - Add a song to the beginning, end, or a specific position in the playlist.
 2. **Remove Song**
     
-    - Remove a song by its name or position in the playlist.
+    - Remove a song by its name in the playlist.
 3. **Navigate Playlist (In progress)**
     
     - Navigate forward and backward through the playlist using the doubly linked list.
