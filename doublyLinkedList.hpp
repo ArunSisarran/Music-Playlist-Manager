@@ -1,6 +1,7 @@
 #ifndef DOUBLY_LINKED_LIST_HPP
 #define DOUBLY_LINKED_LIST_HPP
 #include <string>
+#include <vector>
 
 
 struct Song{
@@ -36,12 +37,16 @@ public:
     bool addSong(Song* song, const int& position);
 //Removes a song from the linked list based on the specified title of the song
     bool removeSong(const std::string& title);
-//Searches and returns the song pointer of the specified title Song* searchForSong(const std::string& title);
+//Searches and returns the song pointer of the specified title 
     Song* searchForSong(const std::string& title);
 //Displays current linked list
     void display() const;
 //Saves the playlist to a json file
     void savePlaylist() const;
+//Loads a playist that has been previously saved
+    void loadPlaylist();
+//Converts the linked list into a vector
+    std::vector<std::string> toVector();
 };
 
 #endif

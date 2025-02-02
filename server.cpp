@@ -1,9 +1,8 @@
+#include "crow.h"
 #include "doublyLinkedList.hpp"
-#include <iostream>
 
-int main(){
-
-    DoublyLinkedList playlist = DoublyLinkedList();
+int main() {
+    DoublyLinkedList playlist = DoublyLinkedList(); 
     Song* song1 = new Song("title 1", "artist 1", "link 1", 40);
     Song* song2 = new Song("title 2", "artist 2", "link 2", 40);
     Song* song3 = new Song("title 3", "artist 3", "link 3", 40);
@@ -16,16 +15,20 @@ int main(){
     playlist.addSong(song3);
     playlist.addSong(song4);
     playlist.addSong(song5);
-    playlist.addSong(song6, 3);
+    playlist.addSong(song6);
 
-    playlist.display();
 
-    playlist.removeSong("title 1");
-    playlist.removeSong("title 5");
-    playlist.removeSong("title 6");
+    crow::SimpleApp app; 
 
-    playlist.display();
+    // Define an API route
+    CROW_ROUTE(app, "/api/songs")
+    .methods("GET"_method)([&playlist]() {
+        auto data = playlist.toVector();
+        crow::json::wvalue response;
+        response["songs"] = data;
+        return response;
+    });
 
-    playlist.searchForSong("title 4");
-    return 0;
+ 
+    app.port(8080).multithreaded().run();
 }

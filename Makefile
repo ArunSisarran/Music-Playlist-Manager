@@ -1,33 +1,39 @@
 
-# Compiler and flags
+
+# Compiler
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -O2
-
-# Target executable name
-TARGET = playlist_manager
-
-# Source files and object files
-SOURCES = doublyLinkedList.cpp main.cpp
-OBJECTS = $(SOURCES:.cpp=.o)
+CXXFLAGS = -std=c++17 -O2
+LIBS = -lpthread
+TARGET = server
+SRCS = server.cpp doublyLinkedList.cpp
+OBJS = $(SRCS:.cpp=.o)
 
 # Default target
 all: $(TARGET)
 
-# Build the target executable
-$(TARGET): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJECTS)
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) $(OBJS) -o $(TARGET) $(LIBS)
 
-# Compile source files into object files
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Clean up build files
+# Run C++ server in the background
+run-backend: $(TARGET)
+	./$(TARGET) &
+
+# Run Node.js frontend in the background
+run-frontend:
+	nohup node server.js > frontend.log 2>&1 &
+
+# Run both servers
+run-all: run-backend run-frontend
+	@echo "Both servers are running."
+
+# Stop both servers
+stop:
+	pkill -f server
+	pkill -f node
+
 clean:
-	rm -f $(OBJECTS) $(TARGET)
-
-rebuild: clean all
-
-# Run the program
-run: all
-	./$(TARGET)
+	rm -f $(TARGET) $(OBJS)
 

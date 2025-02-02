@@ -1,6 +1,7 @@
 #include "doublyLinkedList.hpp"
 #include <string>
 #include <iostream>
+#include <vector>
 
 DoublyLinkedList::DoublyLinkedList(){
     head = nullptr;
@@ -140,4 +141,14 @@ bool DoublyLinkedList::removeSong(const std::string& title){
     size--;
     std::cout<<"Removed Song: "<<title<<std::endl;
     return true;
+}
+
+std::vector<std::string> DoublyLinkedList::toVector(){
+    std::vector<std::string> result;
+    Song* temp = head;
+    while(temp){
+        result.push_back(temp->title_+" by "+temp->artist_);
+        temp = temp->next_;
+    }
+    return result;
 }

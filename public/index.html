@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doubly Linked List Display</title>
+    <link rel="stylesheet" href="styles.css"> 
+    <script>
+        async function fetchSongs() {
+            try {
+                let response = await fetch("/get-songs");
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                let data = await response.json();
+                let container = document.getElementById("songs-container");
+                container.innerHTML = "";  
+                
+                data.songs.forEach(song => {
+                    let panel = document.createElement("div");
+                    panel.classList.add("song-panel");
+
+                    let title = document.createElement("div");
+                    title.classList.add("song-title");
+                    title.textContent = song.split(" by ")[0];  
+
+                    let artist = document.createElement("div");
+                    artist.classList.add("song-artist");
+                    artist.textContent = song.split(" by ")[1];  
+
+                    panel.appendChild(title);
+                    panel.appendChild(artist);
+
+                    container.appendChild(panel);
+                });
+            } catch (error) {
+                console.error("Error fetching Songs data:", error);
+                document.getElementById("error").textContent = "Failed to fetch data.";
+            }
+        }    </script>
+</head>
+<body>
+    <h1>Playlist Manager</h1>
+    <button onclick="fetchSongs()">View Songs</button>
+    <p id="error" style="color: red;"></p>
+    <ul id="songs-container"></ul>
+</body>
+</html>
