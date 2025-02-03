@@ -7,6 +7,19 @@
     <title>Doubly Linked List Display</title>
     <link rel="stylesheet" href="styles.css"> 
     <script>
+        function getUserInput() {
+            let userInput = document.getElementById("user-input").value; // Get input field value
+            let displayArea = document.getElementById("display-area"); // Find display area
+
+            if (userInput.trim() === "") {
+                alert("Please enter a song name!"); // Prevent empty input
+                return;
+            }
+
+            displayArea.innerHTML = `<p>You entered: <strong>${userInput}</strong></p>`; // Display user input
+            document.getElementById("user-input").value = ""; // Clear input field
+        }
+    </script>    <script>
         async function fetchSongs() {
             try {
                 let response = await fetch("/get-songs");
@@ -38,12 +51,20 @@
                 console.error("Error fetching Songs data:", error);
                 document.getElementById("error").textContent = "Failed to fetch data.";
             }
-        }    </script>
+        }    
+    </script>
 </head>
 <body>
+<div id = "container">
     <h1>Playlist Manager</h1>
     <button onclick="fetchSongs()">View Songs</button>
     <p id="error" style="color: red;"></p>
     <ul id="songs-container"></ul>
+
+        <h1>Enter a Song Name</h1>
+        <input type="text" id="user-input" value="Enter a song name">
+        <button onclick="getUserInput()">Submit</button>
+        <div id="display-area"></div>
+</div>
 </body>
 </html>
