@@ -1,7 +1,7 @@
 # Music-Playlist-Manager
 ### Overview:
 
-A web based application that uses a doubly linked list to manage a music playlist. The playlist allows users to add, remove, and navigate between songs. Users can also save and load playlists from a file.
+A CLI application that uses a doubly linked list to manage a music playlist. The playlist allows users to add, remove, and navigate between songs. Users can also save and load playlists from a file.
 
 ### Features:
 
