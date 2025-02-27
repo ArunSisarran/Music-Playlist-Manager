@@ -1,33 +1,23 @@
 
-# Define the compiler and compiler flags
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall
+CXXFLAGS = -std=c++17 -Wall
+LDFLAGS = -lncurses
 
-# Define the source files
-SRCS = doublyLinkedList.cpp test.cpp display.cpp
-
-# Define the object files
-OBJS = $(SRCS:.cpp=.o)
-
-# Define the output executable
+SRC = src/test.cpp src/Display/display.cpp src/LinkedList/doublyLinkedList.cpp
+OBJ = $(SRC:.cpp=.o)
 TARGET = program
 
-# Rule for building the executable
-$(TARGET): $(OBJS)
-	$(CXX) $(OBJS) -o $(TARGET) -lncurses
+all: $(TARGET)
 
-# Rule for building object files from source files
+$(TARGET): $(OBJ)
+	$(CXX) $(CXXFLAGS) $(OBJ) -o $(TARGET) $(LDFLAGS)
+
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Clean up generated files
-clean:
-	rm -f $(OBJS) $(TARGET)
-
-# Run the program
-run: $(TARGET)
+run: all
 	./$(TARGET)
 
-# Phony target for clean
-.PHONY: clean
+clean:
+	rm -f $(OBJ) $(TARGET)
 

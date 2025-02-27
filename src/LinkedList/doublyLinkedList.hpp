@@ -48,6 +48,11 @@ public:
     void loadPlaylist();
 //Converts the linked list into a vector
     std::vector<std::string> getPlaylist();
+//Getter method for the head of the list
+    std::shared_ptr<Song>getHead() const;
+//Getter method for the tail of the list
+    std::shared_ptr<Song>getTail() const;
+    int getSize() const;
 };
 
 #endif

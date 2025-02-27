@@ -7,6 +7,7 @@
 DoublyLinkedList::DoublyLinkedList(){
     head = nullptr;
     tail = nullptr;
+    size = 0;
 }
 
 bool DoublyLinkedList::addSong(std::shared_ptr<Song> song){
@@ -34,7 +35,6 @@ bool DoublyLinkedList::addSong(std::shared_ptr<Song> song){
         tail = newSong;
         newSong->next_ = nullptr;
         newSong->previous_ = temp;
-        std::cout<<"Added song: "<<newSong->title_<<", By: "<<newSong->artist_<<std::endl;
         size++;
         return true;
     }
@@ -43,7 +43,6 @@ bool DoublyLinkedList::addSong(std::shared_ptr<Song> song){
 
 bool DoublyLinkedList::addSong(std::shared_ptr<Song> song, const int& position){
     if(position <= 0 || position > size){
-        std::cout<<"Invalid position '"<<position<<"'"<<std::endl;
         return false;
     } 
 
@@ -88,7 +87,6 @@ std::shared_ptr<Song> DoublyLinkedList::searchForSong(const std::string& title){
     std::shared_ptr<Song> current = head;
 
     if(!head){
-        std::cout<<"Playlist is empty"<<std::endl;
         return nullptr;
     }
 
@@ -97,7 +95,6 @@ std::shared_ptr<Song> DoublyLinkedList::searchForSong(const std::string& title){
     }
 
     if(!current){
-        std::cout<<"Name not found in playlist"<<std::endl;
         return nullptr;
     }
 
@@ -106,7 +103,6 @@ std::shared_ptr<Song> DoublyLinkedList::searchForSong(const std::string& title){
 
 void DoublyLinkedList::display() const{
     if (!head) {
-        std::cout << "Playlist is empty"<<std::endl;
         return;
     }
 
@@ -151,4 +147,16 @@ std::vector<std::string> DoublyLinkedList::getPlaylist(){
         temp = temp->next_;
     }
     return result;
+}
+
+std::shared_ptr<Song>DoublyLinkedList::getHead() const{
+    return head;
+}
+
+std::shared_ptr<Song>DoublyLinkedList::getTail() const{
+    return tail;
+}
+
+int DoublyLinkedList::getSize() const{
+    return size;
 }
