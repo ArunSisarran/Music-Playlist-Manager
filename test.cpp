@@ -1,15 +1,17 @@
 #include "doublyLinkedList.hpp"
 #include <iostream>
+#include <memory>
+#include "display.hpp"
 
-void test(){
+int main(){
 
     DoublyLinkedList playlist = DoublyLinkedList();
-    Song* song1 = new Song("title 1", "artist 1", "link 1", 40);
-    Song* song2 = new Song("title 2", "artist 2", "link 2", 40);
-    Song* song3 = new Song("title 3", "artist 3", "link 3", 40);
-    Song* song4 = new Song("title 4", "artist 4", "link 4", 40);
-    Song* song5 = new Song("title 5", "artist 5", "link 5", 40);
-    Song* song6 = new Song("title 6", "artist 6", "link 6", 40);
+    auto song1 = std::make_shared<Song>("title 1", "artist 1", "link 1", 40);
+    auto song2 = std::make_shared<Song>("title 2", "artist 2", "link 2", 40);
+    auto song3 = std::make_shared<Song>("title 3", "artist 3", "link 3", 40);
+    auto song4 = std::make_shared<Song>("title 4", "artist 4", "link 4", 40);
+    auto song5 = std::make_shared<Song>("title 5", "artist 5", "link 5", 40);
+    auto song6 = std::make_shared<Song>("title 6", "artist 6", "link 6", 40);
 
     playlist.addSong(song1);
     playlist.addSong(song2);
@@ -28,4 +30,8 @@ void test(){
 
     playlist.searchForSong("title 4");
 
+    display screen = display();
+    screen.displayPlaylist(playlist);
+
+    return 0;
 }
