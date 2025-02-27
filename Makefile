@@ -1,24 +1,23 @@
 
-
-# Compiler
 CXX = g++
-CXXFLAGS = -std=c++17 -O2
-LIBS = -lpthread
-TARGET = server
-SRCS = test. cpp doublyLinkedList.cpp
-OBJS = $(SRCS:.cpp=.o)
+CXXFLAGS = -std=c++17 -Wall
+LDFLAGS = -lncurses
 
-# Default target
+SRC = src/test.cpp src/Display/display.cpp src/LinkedList/doublyLinkedList.cpp
+OBJ = $(SRC:.cpp=.o)
+TARGET = program
+
 all: $(TARGET)
 
-$(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) $(OBJS) -o $(TARGET) $(LIBS)
+$(TARGET): $(OBJ)
+	$(CXX) $(CXXFLAGS) $(OBJ) -o $(TARGET) $(LDFLAGS)
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
-# Run C++ server in the background
-run: $(TARGET)
-	./$(TARGET) &
+
+run: all
+	./$(TARGET)
+
 clean:
-	rm -f $(TARGET) $(OBJS)
+	rm -f $(OBJ) $(TARGET)
 

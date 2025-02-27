@@ -1,4 +1,5 @@
 #include "doublyLinkedList.hpp"
+#include <memory>
 #include <string>
 #include <iostream>
 #include <vector>
@@ -6,10 +7,11 @@
 DoublyLinkedList::DoublyLinkedList(){
     head = nullptr;
     tail = nullptr;
+    size = 0;
 }
 
-bool DoublyLinkedList::addSong(Song* song){
-    Song* newSong = new Song(song->title_,
+bool DoublyLinkedList::addSong(std::shared_ptr<Song> song){
+    auto newSong = std::make_shared<Song>(song->title_,
                              song->artist_,
                              song->youtubeLink_,
                              song->duration_);
@@ -23,7 +25,7 @@ bool DoublyLinkedList::addSong(Song* song){
     }
 
     if(head != nullptr){
-        Song* temp = head;
+        std::shared_ptr<Song> temp = head;
 
         while(temp->next_){
             temp = temp->next_;
@@ -33,20 +35,18 @@ bool DoublyLinkedList::addSong(Song* song){
         tail = newSong;
         newSong->next_ = nullptr;
         newSong->previous_ = temp;
-        std::cout<<"Added song: "<<newSong->title_<<", By: "<<newSong->artist_<<std::endl;
         size++;
         return true;
     }
     return false;
 }
 
-bool DoublyLinkedList::addSong(Song* song, const int& position){
+bool DoublyLinkedList::addSong(std::shared_ptr<Song> song, const int& position){
     if(position <= 0 || position > size){
-        std::cout<<"Invalid position '"<<position<<"'"<<std::endl;
         return false;
     } 
 
-    Song* newSong = new Song(song->title_,
+    auto newSong = std::make_shared<Song>(song->title_,
                              song->artist_,
                              song->youtubeLink_,
                              song->duration_);
@@ -58,7 +58,7 @@ bool DoublyLinkedList::addSong(Song* song, const int& position){
         return true;
     }
     else if(position <= size){
-        Song* current = head;
+        std::shared_ptr<Song> current = head;
         int index = 1;
 
         while(index < position - 1 && current->next_){
@@ -83,11 +83,10 @@ bool DoublyLinkedList::addSong(Song* song, const int& position){
     return false;
 }
 
-Song* DoublyLinkedList::searchForSong(const std::string& title){
-    Song* current = head;
+std::shared_ptr<Song> DoublyLinkedList::searchForSong(const std::string& title){
+    std::shared_ptr<Song> current = head;
 
     if(!head){
-        std::cout<<"Playlist is empty"<<std::endl;
         return nullptr;
     }
 
@@ -96,7 +95,6 @@ Song* DoublyLinkedList::searchForSong(const std::string& title){
     }
 
     if(!current){
-        std::cout<<"Name not found in playlist"<<std::endl;
         return nullptr;
     }
 
@@ -105,11 +103,10 @@ Song* DoublyLinkedList::searchForSong(const std::string& title){
 
 void DoublyLinkedList::display() const{
     if (!head) {
-        std::cout << "Playlist is empty"<<std::endl;
         return;
     }
 
-    Song* current = head;
+    std::shared_ptr<Song> current = head;
     int index = 1;
 
     while (current) {
@@ -119,7 +116,7 @@ void DoublyLinkedList::display() const{
 }
 
 bool DoublyLinkedList::removeSong(const std::string& title){
-    Song* current = searchForSong(title);
+    std::shared_ptr<Song> current = searchForSong(title);
 
     if(current == head && current == tail){
         head = nullptr;
@@ -137,18 +134,29 @@ bool DoublyLinkedList::removeSong(const std::string& title){
         current->next_->previous_ = current->previous_;
     }
 
-    delete current;
     size--;
     std::cout<<"Removed Song: "<<title<<std::endl;
     return true;
 }
 
-std::vector<std::string> DoublyLinkedList::toVector(){
+std::vector<std::string> DoublyLinkedList::getPlaylist(){
     std::vector<std::string> result;
-    Song* temp = head;
+    std::shared_ptr<Song> temp = head;
     while(temp){
         result.push_back(temp->title_+" by "+temp->artist_);
         temp = temp->next_;
     }
     return result;
+}
+
+std::shared_ptr<Song>DoublyLinkedList::getHead() const{
+    return head;
+}
+
+std::shared_ptr<Song>DoublyLinkedList::getTail() const{
+    return tail;
+}
+
+int DoublyLinkedList::getSize() const{
+    return size;
 }
