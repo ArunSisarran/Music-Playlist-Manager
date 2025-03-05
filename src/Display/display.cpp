@@ -7,8 +7,9 @@
 #include <vector>
 #include "display.hpp"
 #include "../LinkedList/doublyLinkedList.hpp"
+#include "../SpotifyPlayer/spotifyPlayer.hpp"
 
-#define HELP_MSG "Arrow Keys: Navigate | q: Quit | a: Add Song | Page Up/Down: Scroll"
+#define HELP_MSG "Arrow Keys: Navigate | q: Quit | a: Add Song | p: Play/Pause | n: Next Song | b: Previous Song"
 
 display::display() {
     initscr();                  
@@ -26,6 +27,11 @@ display::display() {
 void display::start(DoublyLinkedList& playlist) {
     int height, width;
     getmaxyx(stdscr, height, width);
+    SpotifyPlayer player;
+
+    std::vector<std::shared_ptr<Song>>songs = playlist.getPlaylist();
+
+    player.loadPlaylist(songs);
 
     int key, selected = 0, offset = 0;
     while (true) {
@@ -69,8 +75,26 @@ void display::start(DoublyLinkedList& playlist) {
                 }
                 break;
 
+            case 'p': //Play/Pause
+                if(!player.isPlaying())
+                    player.play();
+                else if(player.isPaused())
+                    player.resume();
+                else
+                    player.pause();
+                break;
+
+            case 'n': //Next Track
+                player.nextTrack();
+                break;
+
+            case 'b':
+                player.previousTrack();
+                break;
+
             case 'q':  // Quit
             case 27:   // ESC to quit
+                player.stopPlayback();
                 endwin();
                 return;
         }

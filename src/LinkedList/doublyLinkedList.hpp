@@ -47,7 +47,7 @@ public:
 //Loads a playist that has been previously saved
     void loadPlaylist();
 //Converts the linked list into a vector
-    std::vector<std::string> getPlaylist();
+    std::vector<std::shared_ptr<Song>> getPlaylist();
 //Getter method for the head of the list
     std::shared_ptr<Song>getHead() const;
 //Getter method for the tail of the list
