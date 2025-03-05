@@ -143,12 +143,12 @@ bool DoublyLinkedList::removeSong(const std::string& title){
 }
 
 //testing purposes
-std::vector<std::string> DoublyLinkedList::getPlaylist(){
-    std::vector<std::string> result;
-    std::shared_ptr<Song> temp = head;
-    while(temp){
-        result.push_back(temp->title_);
-        temp = temp->next_;
+std::vector<std::shared_ptr<Song>> DoublyLinkedList::getPlaylist(){
+    std::vector<std::shared_ptr<Song>> result;
+    auto current = getHead();
+    while(current){
+        result.push_back(current);
+        current = current->next_;
     }
     return result;
 }
