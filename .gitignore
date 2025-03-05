@@ -1,0 +1,16 @@
+# Ignore environment files
+.env
+*.env
+
+# Compiled files
+*.o
+*.out
+build/
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Dependency directories
+lib/
+deps/

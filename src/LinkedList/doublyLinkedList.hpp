@@ -8,16 +8,16 @@
 struct Song{
     std::string title_;
     std::string artist_;
+    std::string link_;
     int duration_;
-    std::string youtubeLink_;
     std::shared_ptr<Song> previous_;
     std::shared_ptr<Song> next_;
 
-    Song(std::string title, std::string artist, std::string youtubeLink, int duration){
+    Song(std::string title,std::string artist, std::string link, int duration){
         title_ = title;
-        artist_ = artist;
-        youtubeLink_ = youtubeLink;
         duration_ = duration;
+        artist_ = artist;
+        link_ = link;
         previous_ = nullptr;
         next_ = nullptr;
     }
