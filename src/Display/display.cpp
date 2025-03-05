@@ -1,4 +1,5 @@
 #include <memory>
+#include "../LinksFunction/link.hpp"
 #include <ncurses.h>
 #include <string>
 #include <string.h>
@@ -7,7 +8,7 @@
 #include "display.hpp"
 #include "../LinkedList/doublyLinkedList.hpp"
 
-#define HELP_MSG "Arrow Keys: Navigate | q: Quit | a: Add Song"
+#define HELP_MSG "Arrow Keys: Navigate | q: Quit | a: Add Song | Page Up/Down: Scroll"
 
 display::display() {
     initscr();                  
@@ -19,24 +20,22 @@ display::display() {
 
     // Color pairs normal and highlighted
     init_pair(1, COLOR_WHITE, COLOR_BLACK);  
-    init_pair(2, COLOR_BLACK, COLOR_GREEN); 
+    init_pair(2, COLOR_BLACK, COLOR_WHITE); 
 }
-
 
 void display::start(DoublyLinkedList& playlist) {
     int height, width;
     getmaxyx(stdscr, height, width);
 
-    displayPlaylist(playlist, 0);
-
     int key, selected = 0, offset = 0;
     while (true) {
+        displayPlaylist(playlist, selected, offset);
+
         key = getch();
 
         switch (key) {
             case 'a':  // Add song
                 addSong(playlist);
-                displayPlaylist(playlist, selected); 
                 break;
 
             case KEY_UP:  // Move up
@@ -44,15 +43,30 @@ void display::start(DoublyLinkedList& playlist) {
                     selected--;
                     if (selected < offset) offset--; 
                 }
-                displayPlaylist(playlist, selected);  
                 break;
 
             case KEY_DOWN:  // Move down
                 if (selected < playlist.getSize() - 1) {
                     selected++;
-                    if (selected >= offset + height - 3) offset++;  
+                    int visibleRows = height - 3;
+                    if (selected >= offset + visibleRows) offset++;  
                 }
-                displayPlaylist(playlist, selected); 
+                break;
+
+            case KEY_PPAGE:  // Page Up
+                if (offset > 0) {
+                    int visibleRows = height - 3;
+                    offset = std::max(0, offset - visibleRows);
+                    selected = offset;
+                }
+                break;
+
+            case KEY_NPAGE:  // Page Down
+                if (selected < playlist.getSize() - 1) {
+                    int visibleRows = height - 3;
+                    offset = std::min(static_cast<int>(playlist.getSize() - visibleRows), offset + visibleRows);
+                    selected = offset;
+                }
                 break;
 
             case 'q':  // Quit
@@ -63,46 +77,64 @@ void display::start(DoublyLinkedList& playlist) {
     }
 }
 
-
-
-void display::displayPlaylist(DoublyLinkedList& playlist, int selected) {
+void display::displayPlaylist(DoublyLinkedList& playlist, int& selected, int& offset) {
     int height, width;
     getmaxyx(stdscr, height, width);
 
     std::shared_ptr<Song> current = playlist.getHead();
-    int visibleRows = height - 3, offset = 0, row = 0, displayRow = 0;
+    int visibleRows = height - 3;
+
+    // Move to offset position
+    for (int i = 0; i < offset && current != nullptr; i++) {
+        current = current->next_;
+    }
 
     clear();  
     if (current == nullptr) {
-        mvprintw(height / 2, 1, "Playlist is empty!");  // Display empty message
+        mvprintw(height / 2, 1, "Playlist is empty!");
         refresh();
         return;
     }
 
-    // Move to offset position
-    while (row < offset && current != nullptr) {
-        current = current->next_;
-        row++;
-    }
-
     // Display songs with highlighting for selected song
-    while (current != nullptr && displayRow < visibleRows) {
-        if (displayRow == selected) {
-            attron(A_REVERSE);  // Highlight the selected song
+    for (int displayRow = 0; 
+         displayRow < visibleRows && current != nullptr; 
+         displayRow++, current = current->next_) {
+        
+        int globalIndex = displayRow + offset;
+        
+        if (globalIndex == selected) {
+            attron(COLOR_PAIR(2) | A_BOLD);  // Highlighted row
+        } else {
+            attron(COLOR_PAIR(1));  // Normal row
         }
 
-        std::string songInfo = current->title_ + " - " + current->artist_;
+        // Truncate or pad song info to fit width
+        std::string songInfo = current->title_;
+        if (static_cast<size_t>(width - 2) < songInfo.length()) {
+            songInfo = songInfo.substr(0, static_cast<size_t>(width - 5)) + "...";
+        }
+        
+        // Print song title
         mvprintw(displayRow, 1, "%s", songInfo.c_str());
 
-        if (displayRow == selected) {
-            attroff(A_REVERSE);  // Turn off highlight
+        // Reset attributes
+        if (globalIndex == selected) {
+            attroff(COLOR_PAIR(2) | A_BOLD);
+        } else {
+            attroff(COLOR_PAIR(1));
         }
-
-        current = current->next_;
-        displayRow++;
     }
 
-    mvprintw(height - 2, (width - strlen(HELP_MSG)) / 2, HELP_MSG);
+    // Display total playlist info
+    mvprintw(height - 2, 1, "Total Songs: %d | Showing: %d-%d", 
+             playlist.getSize(), 
+             offset + 1, 
+             std::min(offset + visibleRows, static_cast<int>(playlist.getSize())));
+
+    // Display help message centered
+    mvprintw(height - 1, (width - strlen(HELP_MSG)) / 2, HELP_MSG);
+
     refresh();
 }
 
@@ -115,47 +147,72 @@ void display::addSong(DoublyLinkedList& playlist) {
     box(addSongWin, 0, 0); 
     wrefresh(addSongWin);
 
-    std::shared_ptr<Song> newSong = std::make_shared<Song>("", "", "", 0);
-
-    char buffer[256];
-
-    // Title input
-    mvwprintw(addSongWin, 1, 1, "Enter Title: ");
-    wrefresh(addSongWin);
-    move(height / 4 + 1, 15);  
-    echo();
-    getstr(buffer);
-    newSong->title_ = std::string(buffer);
-
-    // Artist input
-    mvwprintw(addSongWin, 3, 1, "Enter Artist: ");
-    wrefresh(addSongWin);
-    move(height / 4 + 3, 16);  
-    getstr(buffer);
-    newSong->artist_ = std::string(buffer);
+    char buffer[256] = {0};  // Initialize buffer to zero
 
     // Link input
-    mvwprintw(addSongWin, 5, 1, "Enter Link: ");
+    mvwprintw(addSongWin, 2, 1, "Enter Spotify Playlist Link:");
+    mvwprintw(addSongWin, 4, 1, "Example: https://open.spotify.com/playlist/...");
+    mvwprintw(addSongWin, 6, 1, "Link: ");
     wrefresh(addSongWin);
-    move(height / 4 + 5, 14);  
-    getstr(buffer);
-    newSong->youtubeLink_ = std::string(buffer);
+    
+    echo();  
+    wmove(addSongWin, 6, 7); // Move cursor to input position
+    wgetstr(addSongWin, buffer);  
+    noecho(); 
 
-    // Duration input
-    mvwprintw(addSongWin, 7, 1, "Enter Duration (seconds): ");
-    wrefresh(addSongWin);
-    move(height / 4 + 7, 28);  
-    getstr(buffer);
-    newSong->duration_ = std::stoi(buffer);
+    std::string link(buffer);
 
-    noecho();
+    // Attempt to fetch and parse Spotify playlist
+    try {
+        // Extract playlist ID
+        std::string playlistID = Link::extractSpotifyID(link);
+        
+        if (playlistID.empty()) {
+            mvwprintw(addSongWin, 8, 1, "Invalid Spotify playlist link!");
+            wrefresh(addSongWin);
+            sleep(2);
+            delwin(addSongWin);
+            return;
+        }
 
-    playlist.addSong(newSong);
+        // Fetch playlist data
+        std::string jsonResponse = Link::fetchSpotifyPlaylist(playlistID);
+        
+        if (jsonResponse.empty()) {
+            mvwprintw(addSongWin, 8, 1, "Failed to fetch playlist data!");
+            wrefresh(addSongWin);
+            sleep(2);
+            delwin(addSongWin);
+            return;
+        }
 
-    mvprintw(height - 2, 1, "Song added to playlist!"); 
-    refresh();
-    sleep(1);
+        // Parse songs
+        std::vector<std::shared_ptr<Song>> songs = Link::parseSpotifyData(jsonResponse);
+        
+        if (songs.empty()) {
+            mvwprintw(addSongWin, 8, 1, "No songs found in the playlist!");
+            wrefresh(addSongWin);
+            sleep(2);
+            delwin(addSongWin);
+            return;
+        }
 
-    delwin(addSongWin);  
+        // Add songs to playlist
+        for (const auto& song : songs) {
+            playlist.addSong(song);
+        }
+
+        // Display success message
+        mvwprintw(addSongWin, 8, 1, "%zu songs added to playlist!", songs.size());
+        wrefresh(addSongWin);
+        sleep(2);
+    }
+    catch (const std::exception& e) {
+        // Handle any unexpected errors
+        mvwprintw(addSongWin, 8, 1, "Error: %s", e.what());
+        wrefresh(addSongWin);
+        sleep(2);
+    }
+
+    delwin(addSongWin);
 }
-

@@ -12,18 +12,19 @@ DoublyLinkedList::DoublyLinkedList(){
 
 bool DoublyLinkedList::addSong(std::shared_ptr<Song> song){
     auto newSong = std::make_shared<Song>(song->title_,
-                             song->artist_,
-                             song->youtubeLink_,
-                             song->duration_);
-
+                                          song->artist_,
+                                          song->link_,
+                                          song->duration_);
+//if the list is empty
     if(!head){
         head = newSong;
         tail = newSong;
-        std::cout<<"Added song: "<<newSong->title_<<", By: "<<newSong->artist_<<std::endl;
+        std::cout<<"Added song: "<<newSong->title_<<std::endl;
         size++;
         return true;
     }
 
+//if the list has items in it
     if(head != nullptr){
         std::shared_ptr<Song> temp = head;
 
@@ -47,9 +48,10 @@ bool DoublyLinkedList::addSong(std::shared_ptr<Song> song, const int& position){
     } 
 
     auto newSong = std::make_shared<Song>(song->title_,
-                             song->artist_,
-                             song->youtubeLink_,
-                             song->duration_);
+                                          song->artist_,
+                                          song->link_,
+                                          song->duration_);
+
     if(position == 1){
         newSong->next_ = head;
         head->previous_ = newSong;
@@ -110,11 +112,12 @@ void DoublyLinkedList::display() const{
     int index = 1;
 
     while (current) {
-        std::cout << index++ << ". " << current->title_ << " by " << current->artist_ << " (" << current->duration_ << " seconds)"<<std::endl;
+        std::cout << index++ << ". " << current->title_ << " (" << current->duration_ << " seconds)"<<std::endl;
         current = current->next_;
     }
 }
 
+//TODO IMPLEMENT FUNCTION
 bool DoublyLinkedList::removeSong(const std::string& title){
     std::shared_ptr<Song> current = searchForSong(title);
 
@@ -139,11 +142,12 @@ bool DoublyLinkedList::removeSong(const std::string& title){
     return true;
 }
 
+//testing purposes
 std::vector<std::string> DoublyLinkedList::getPlaylist(){
     std::vector<std::string> result;
     std::shared_ptr<Song> temp = head;
     while(temp){
-        result.push_back(temp->title_+" by "+temp->artist_);
+        result.push_back(temp->title_);
         temp = temp->next_;
     }
     return result;

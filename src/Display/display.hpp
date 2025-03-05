@@ -8,7 +8,7 @@ public:
 
     display();
 
-    void displayPlaylist(DoublyLinkedList& playlist, int selected);
+    void displayPlaylist(DoublyLinkedList& playlist, int& selected, int& offset);
     void addSong(DoublyLinkedList& playlist);
     void start(DoublyLinkedList& playlist);
 };
